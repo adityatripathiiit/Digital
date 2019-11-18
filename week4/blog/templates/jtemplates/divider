@@ -1,0 +1,40 @@
+//behavioural code for restoring array divider
+module {{modulename}}(clk, Dividend, Divisor, Quotient, Remainder);
+    input clk;
+    input [{{n-1}}:0] Dividend, Divisor;
+    output [{{n-1}}:0] Quotient, Remainder;
+    //register a, p and temp to store and shift the values of result
+    reg [{{n-1}}:0] Quotient, Remainder;
+    reg [{{n-1}}:0] p, a, temp;
+    integer i;
+    //initializing Quotient and Remainder
+    always @(posedge clk)
+    begin
+        begin
+            Quotient <= a;
+            Remainder <= p;
+        end
+    end
+    //using the shift, substract and restore algorithm to get the output
+    always @(*)
+    begin
+        a = Dividend;
+        p = 0;
+
+        for(i = 0; i < {{n}}; i = i+1)
+        begin
+ 
+            p = (p << 1) | a[{{n-1}}];
+            a = a << 1;
+
+ 
+            temp = p;
+            p = p - Divisor;
+
+            if( p[{{n-1}}] ) // if p < 0
+                p = temp; //restore value
+            else
+                a = a | 1;
+        end 
+    end             
+endmodule
